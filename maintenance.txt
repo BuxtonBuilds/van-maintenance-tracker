@@ -1,0 +1,10 @@
+Date: 12/06/2026
+Mileage: 46500
+Work: Service
+Cost: 3000
+--------------------
+Date: 12/06/2026
+Mileage: 46500
+Work: Water Pump
+Cost: 500
+--------------------
