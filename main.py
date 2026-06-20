@@ -9,7 +9,8 @@ while True:
     print("2 - View maintenance records")
     print("3 - Show total maintenance cost")
     print("4 - Search maintenance records")
-    print("5 - Quit")
+    print("5 - Next service due")
+    print("6 - Quit")
 
     choice = input("> ")
 
@@ -90,6 +91,29 @@ while True:
             print("No maintenance records found.")
 
     elif choice == "5":
+
+        last_service_mileage = input("Last service mileage: ")
+        current_mileage = input("Current mileage: ")
+        service_interval = input("Service interval miles: ")
+
+        next_service_due = int(last_service_mileage) + int(service_interval)
+        miles_remaining = next_service_due - int(current_mileage)
+
+        print()
+        print("Next service due:")
+        print(f"{next_service_due} miles")
+        print()
+        print("Miles remaining:")
+        print(f"{miles_remaining} miles")
+
+        if miles_remaining <= 0:
+            print("Service is due now.")
+        elif miles_remaining <= 1000:
+            print("Service is coming up soon.")
+        else:
+            print("Service is not due yet.")
+
+    elif choice == "6":
 
         print("Goodbye.")
         break
