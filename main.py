@@ -8,7 +8,8 @@ while True:
     print("1 - Add maintenance record")
     print("2 - View maintenance records")
     print("3 - Show total maintenance cost")
-    print("4 - Quit")
+    print("4 - Search maintenance records")
+    print("5 - Quit")
 
     choice = input("> ")
 
@@ -63,6 +64,32 @@ while True:
             print("No maintenance records found.")
 
     elif choice == "4":
+
+        try:
+            with open(record_file, "r", encoding="utf-8") as file:
+                records = file.read()
+
+            keyword = input("Search keyword: ").lower()
+            record_list = records.split("--------------------")
+
+            matches = []
+
+            for record in record_list:
+                if keyword in record.lower() and record.strip():
+                    matches.append(record.strip())
+
+            print()
+            print("Matches found:", len(matches))
+
+            for match in matches:
+                print()
+                print("--------------------")
+                print(match)
+
+        except FileNotFoundError:
+            print("No maintenance records found.")
+
+    elif choice == "5":
 
         print("Goodbye.")
         break
