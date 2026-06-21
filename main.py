@@ -1,4 +1,7 @@
+import csv
+
 record_file = "maintenance.txt"
+csv_file_name = "maintenance.csv"
 
 print("=== Van Maintenance Tracker ===")
 
@@ -10,7 +13,8 @@ while True:
     print("3 - Show total maintenance cost")
     print("4 - Search maintenance records")
     print("5 - Next service due")
-    print("6 - Quit")
+    print("6 - Export records to CSV")
+    print("7 - Quit")
 
     choice = input("> ")
 
@@ -114,6 +118,45 @@ while True:
             print("Service is not due yet.")
 
     elif choice == "6":
+
+        try:
+            with open(record_file, "r", encoding="utf-8") as file:
+                content = file.read()
+
+            record_list = [
+                record for record in content.split("--------------------")
+                if record.strip()
+            ]
+
+            with open(csv_file_name, "w", newline="", encoding="utf-8") as csv_file:
+                writer = csv.writer(csv_file)
+                writer.writerow(["Date", "Mileage", "Work", "Cost"])
+
+                for record in record_list:
+                    date = ""
+                    mileage = ""
+                    work = ""
+                    cost = ""
+
+                    for line in record.strip().split("\n"):
+                        if line.startswith("Date:"):
+                            date = line.replace("Date:", "").strip()
+                        elif line.startswith("Mileage:"):
+                            mileage = line.replace("Mileage:", "").strip()
+                        elif line.startswith("Work:"):
+                            work = line.replace("Work:", "").strip()
+                        elif line.startswith("Cost:"):
+                            cost = line.replace("Cost:", "").strip()
+
+                    writer.writerow([date, mileage, work, cost])
+
+            print()
+            print(f"Export complete: {csv_file_name}")
+
+        except FileNotFoundError:
+            print("No maintenance records found.")
+
+    elif choice == "7":
 
         print("Goodbye.")
         break
