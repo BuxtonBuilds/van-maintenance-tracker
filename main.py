@@ -14,7 +14,9 @@ while True:
     print("4 - Search maintenance records")
     print("5 - Next service due")
     print("6 - Export records to CSV")
-    print("7 - Quit")
+    print("7 - Edit record")
+    print("8 - Delete record")
+    print("9 - Quit")
 
     choice = input("> ")
 
@@ -157,6 +159,135 @@ while True:
             print("No maintenance records found.")
 
     elif choice == "7":
+
+        try:
+            with open(record_file, "r", encoding="utf-8") as file:
+                content = file.read()
+
+            record_list = [
+                record for record in content.split("--------------------")
+                if record.strip()
+            ]
+
+            if not record_list:
+                print("No maintenance records found.")
+            else:
+                print()
+                print("Maintenance Records")
+                print("-------------------")
+
+                for index, record in enumerate(record_list, start=1):
+                    lines = record.strip().split("\n")
+                    summary = ", ".join(lines)
+                    print(f"{index} - {summary}")
+
+                selected = input("Select record number to edit: ")
+
+                try:
+                    selected_index = int(selected) - 1
+                    selected_record = record_list[selected_index]
+                except (ValueError, IndexError):
+                    selected_record = None
+                    print("Invalid record number.")
+
+                if selected_record is not None:
+                    current_date = ""
+                    current_mileage = ""
+                    current_work = ""
+                    current_cost = ""
+
+                    for line in selected_record.strip().split("\n"):
+                        if line.startswith("Date:"):
+                            current_date = line.replace("Date:", "").strip()
+                        elif line.startswith("Mileage:"):
+                            current_mileage = line.replace("Mileage:", "").strip()
+                        elif line.startswith("Work:"):
+                            current_work = line.replace("Work:", "").strip()
+                        elif line.startswith("Cost:"):
+                            current_cost = line.replace("Cost:", "").strip()
+
+                    print()
+                    print("Leave blank to keep the current value.")
+
+                    new_date = input(f"Date [{current_date}]: ").strip()
+                    new_mileage = input(f"Mileage [{current_mileage}]: ").strip()
+                    new_work = input(f"Work completed [{current_work}]: ").strip()
+                    new_cost = input(f"Cost [{current_cost}]: ").strip()
+
+                    updated_record = (
+                        f"Date: {new_date if new_date else current_date}\n"
+                        f"Mileage: {new_mileage if new_mileage else current_mileage}\n"
+                        f"Work: {new_work if new_work else current_work}\n"
+                        f"Cost: {new_cost if new_cost else current_cost}\n"
+                    )
+
+                    record_list[selected_index] = updated_record
+
+                    with open(record_file, "w", encoding="utf-8") as file:
+                        for record in record_list:
+                            file.write(record.strip() + "\n")
+                            file.write("--------------------\n")
+
+                    print()
+                    print("Record updated.")
+
+        except FileNotFoundError:
+            print("No maintenance records found.")
+
+    elif choice == "8":
+
+        try:
+            with open(record_file, "r", encoding="utf-8") as file:
+                content = file.read()
+
+            record_list = [
+                record for record in content.split("--------------------")
+                if record.strip()
+            ]
+
+            if not record_list:
+                print("No maintenance records found.")
+            else:
+                print()
+                print("Maintenance Records")
+                print("-------------------")
+
+                for index, record in enumerate(record_list, start=1):
+                    lines = record.strip().split("\n")
+                    summary = ", ".join(lines)
+                    print(f"{index} - {summary}")
+
+                selected = input("Select record number to delete: ")
+
+                try:
+                    selected_index = int(selected) - 1
+                    selected_record = record_list[selected_index]
+                except (ValueError, IndexError):
+                    selected_record = None
+                    print("Invalid record number.")
+
+                if selected_record is not None:
+                    print()
+                    print(selected_record.strip())
+                    confirm = input("Delete this record? (y/n): ").strip().lower()
+
+                    if confirm == "y":
+                        del record_list[selected_index]
+
+                        with open(record_file, "w", encoding="utf-8") as file:
+                            for record in record_list:
+                                file.write(record.strip() + "\n")
+                                file.write("--------------------\n")
+
+                        print()
+                        print("Record deleted.")
+                    else:
+                        print("Delete cancelled.")
+
+        except FileNotFoundError:
+            print("No maintenance records found.")
+
+    elif choice == "9":
 
         print("Goodbye.")
         break
