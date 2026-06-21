@@ -16,7 +16,8 @@ while True:
     print("6 - Export records to CSV")
     print("7 - Edit record")
     print("8 - Delete record")
-    print("9 - Quit")
+    print("9 - Service reminder dashboard")
+    print("10 - Quit")
 
     choice = input("> ")
 
@@ -288,6 +289,64 @@ while True:
             print("No maintenance records found.")
 
     elif choice == "9":
+
+        try:
+            with open(record_file, "r", encoding="utf-8") as file:
+                content = file.read()
+
+            record_list = [
+                record for record in content.split("--------------------")
+                if record.strip()
+            ]
+
+            service_mileage = None
+
+            for record in record_list:
+                work = ""
+                mileage = ""
+
+                for line in record.strip().split("\n"):
+                    if line.startswith("Work:"):
+                        work = line.replace("Work:", "").strip()
+                    elif line.startswith("Mileage:"):
+                        mileage = line.replace("Mileage:", "").strip()
+
+                if "service" in work.lower() and mileage:
+                    mileage_value = int(mileage)
+
+                    if service_mileage is None or mileage_value > service_mileage:
+                        service_mileage = mileage_value
+
+            if service_mileage is None:
+                print("No service record exists yet.")
+            else:
+                current_mileage = input("Current mileage: ")
+                service_interval = input("Service interval miles: ")
+
+                next_service_due = service_mileage + int(service_interval)
+                miles_remaining = next_service_due - int(current_mileage)
+
+                if miles_remaining <= 0:
+                    status = "Service is due now."
+                elif miles_remaining <= 1000:
+                    status = "Service is coming up soon."
+                else:
+                    status = "Service is not due yet."
+
+                print()
+                print("Service Reminder Dashboard")
+                print("---------------------------")
+                print(f"Last service mileage: {service_mileage} miles")
+                print(f"Current mileage: {current_mileage} miles")
+                print(f"Service interval: {service_interval} miles")
+                print(f"Next service due: {next_service_due} miles")
+                print(f"Miles remaining: {miles_remaining} miles")
+                print(f"Status: {status}")
+
+        except FileNotFoundError:
+            print("No maintenance records found.")
+
+    elif choice == "10":
 
         print("Goodbye.")
         break
